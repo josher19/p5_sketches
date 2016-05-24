@@ -32,10 +32,13 @@ function draw(){
   colorIndex++;
   scale(8);
   background(0);
-  createCoordinates();
+  // while (attractor.length < 3000) {
+    createCoordinates();
+  // }
+  // deleteCoordinates();
 
   rotateZ(frameCount * 0.02);
-  rotateX(frameCount * 0.01);
+  // rotateX(frameCount * 0.01);
   rotateY(frameCount * 0.02);
 
   for (var i = 0; i < attractor.length -1; i++) {
@@ -54,7 +57,8 @@ function draw(){
 }
 
 function createCoordinates() {
-  var dt = 0.005;
+  // var dt = 0.0095;
+  var dt = 0.0095 * noise(frameCount);
   var dx = (sigma * (y-x) * dt);
   var dy = (x * (rho - z) - y) * dt;
   var dz = (x * y - beta * z) * dt;
@@ -69,3 +73,7 @@ function createCoordinates() {
   attractor.push(coordinates);
 
 }
+
+// function deleteCoordinates() {
+
+// }
