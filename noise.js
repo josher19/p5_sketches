@@ -1,4 +1,3 @@
-// stores all particles
 var particles = [];
 // amount of particles per row
 var pPerRow = 150;
@@ -26,6 +25,18 @@ function setup() {
   seedParticles();
 }
 
+function draw() {
+  if (totalFrames >= 2000) {
+    frameRate(0);
+  }
+  particles.forEach(function(particle) {
+    particle.move();
+    particle.render();
+  });
+
+  totalFrames++;
+}
+
 function seedParticles() {
   var wInterval = width / pPerRow;
   var hInterval = height / pPerRow;
@@ -49,20 +60,6 @@ function seedParticles() {
     }
   }
 }
-
-
-function draw() {
-  if (totalFrames >= 2000) {
-    frameRate(0);
-  }
-  particles.forEach(function(particle) {
-    particle.move();
-    particle.render();
-  });
-
-  totalFrames++;
-}
-
 
 function Particle(x, y, colorIndex) {
   this.position = createVector(x, y);
@@ -88,7 +85,6 @@ function Particle(x, y, colorIndex) {
 }
 
 function resetEnvironment() {
-  particles = null;
   particles = [];
   seedParticles();
   totalFrames = 0;
@@ -102,4 +98,3 @@ function windowResized() {
   );
   resetEnvironment();
 }
-
