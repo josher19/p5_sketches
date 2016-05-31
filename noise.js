@@ -3,17 +3,16 @@ var particles = [];
 var pPerRow = 150;
 var cIndex = 0;
 var noiseScale = 500;
-var totalFrames = 0;
 
 function setup() {
   colors = [
-    color(0, 160, 250, 50),
-    color(0, 150, 250, 50),
-    color(60, 250, 255, 50),
-    color(20, 150, 255, 50),
-    color(255, 150, 0, 50),
-    color(200, 190, 0, 50),
-    color(250, 190, 0, 50)
+    color(0, 160, 250, 60),
+    color(0, 150, 250, 60),
+    color(60, 250, 255, 60),
+    color(20, 150, 255, 60),
+    color(255, 150, 0, 60),
+    color(200, 190, 0, 60),
+    color(250, 190, 0, 60)
   ];
 
   createCanvas(
@@ -26,15 +25,10 @@ function setup() {
 }
 
 function draw() {
-  if (totalFrames >= 2000) {
-    frameRate(0);
-  }
   particles.forEach(function(particle) {
     particle.move();
     particle.render();
   });
-
-  totalFrames++;
 }
 
 function seedParticles() {
@@ -70,7 +64,9 @@ function Particle(x, y, colorIndex) {
       noise(this.position.x / noiseScale, this.position.y / noiseScale) * 15,
       noise(frameCount * noise(frameCount), frameCount / noise(frameCount)) * 0.03
     ) * noiseScale;
+
     var density = 0.97;
+
     this.position.x += cos(cos(angleNoise) * (1.5 + noise(frameCount))) * density;
     this.position.y += sin(sin(angleNoise) * (1.5 + noise(frameCount))) * density;
   }
@@ -87,7 +83,6 @@ function Particle(x, y, colorIndex) {
 function resetEnvironment() {
   particles = [];
   seedParticles();
-  totalFrames = 0;
   background(0);
 }
 
