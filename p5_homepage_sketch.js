@@ -2,7 +2,7 @@ var particles = [];
 var immortalParticles;
 var connectRadius;
 var particleSize = 3;
-var maxParticleSpeed = 0.1;//1;
+var maxParticleSpeed = 0.08;//1;
 var mouseVelocity = 1.2;
 var glowFactor = 5;
 
@@ -34,16 +34,16 @@ function setEnvironmentVariables() {
   immortalParticles = map(
     width * height / 10000,
     10,
-    120,
-    20,
-    60
+    140,
+    10,
+    65
   );
   connectRadius = map(
     immortalParticles,
     10,
-    100,
+    140,
     50,
-    180
+    260
   );
 }
 
@@ -95,16 +95,14 @@ function draw() {
           return;
         }
 
-
         particle3.move();
         particle3.glow();
         particle3.connections++;
 
         noStroke();
-        strokeWeight(1);
-        stroke(r, g, b, 10);
+        strokeWeight(1.5);
+        stroke(r, g, b, 2);
         noFill();
-        // fill(r, g, b, 10);
 
         triangle(
           particle1.coordinates.x,
@@ -189,9 +187,9 @@ function Particle(x, y, velocity, immortality) {
   }
 
   this.glow = function() {
-    strokeWeight(particleSize + this.connections * glowFactor);
+   strokeWeight(particleSize + this.connections * glowFactor);
     // stroke(r, g, b, 10);
-    stroke(r, g, 70, 15);
+    stroke(r, g, 70, 10);
     point(
       this.coordinates.x,
       this.coordinates.y
@@ -212,15 +210,8 @@ function mouseMoved() {
       false
     );
     particles.push(particle);
-    }
-
+  }
 }
-
-Array.prototype.remove = function(from, to) {
-  var rest = this.slice((to || from) + 1 || this.length);
-  this.length = from < 0 ? this.length + from : from;
-  return this.push.apply(this, rest);
-};
 
 function windowResized() {
    createCanvas(
@@ -235,3 +226,9 @@ function resetEnvironment() {
   seedParticles();
   setEnvironmentVariables();
 }
+
+Array.prototype.remove = function(from, to) {
+  var rest = this.slice((to || from) + 1 || this.length);
+  this.length = from < 0 ? this.length + from : from;
+  return this.push.apply(this, rest);
+};
