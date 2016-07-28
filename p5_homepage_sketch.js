@@ -3,7 +3,7 @@ var immortalParticles;
 var connectRadius;
 var particleSize = 3;
 var maxParticleSpeed = 0.1;//1;
-var mouseVelocity = 1.5;
+var mouseVelocity = 1.2;
 var glowFactor = 5;
 
 //0.004;//0.05;
@@ -11,7 +11,7 @@ var glowFactor = 5;
 var pMouseX;
 var pMouseY;
 
-var pulseSize = 6;
+var pulseSize = 12;
 
 var r = 237;
 var g = 34;
@@ -36,14 +36,14 @@ function setEnvironmentVariables() {
     10,
     120,
     20,
-    70
+    60
   );
   connectRadius = map(
     immortalParticles,
     10,
     100,
     50,
-    120
+    180
   );
 }
 
@@ -56,13 +56,14 @@ function draw() {
       if ((particle1.coordinates.x >= width || particle1.coordinates.x <= 0)
         || (particle1.coordinates.y >= height || particle1.coordinates.y <= 0)) {
         particles.remove(i);
+      } else {
+        particle1.pulse();
       }
     }
 
     particle1.render();
     particle1.move();
     particle1.connections++;
-    particle1.glow();
 
     particles.forEach(function(particle2, i2) {
 
@@ -76,7 +77,7 @@ function draw() {
         return;
       }
 
-      particle2.move();
+      // particle2.move();
       particle2.connections++;
 
       particles.forEach(function(particle3, i3) {
@@ -96,11 +97,12 @@ function draw() {
 
 
         particle3.move();
+        particle3.glow();
         particle3.connections++;
 
         noStroke();
         strokeWeight(1);
-        stroke(r, g, b, 5);
+        stroke(r, g, b, 10);
         noFill();
         // fill(r, g, b, 10);
 
@@ -112,7 +114,6 @@ function draw() {
           particle3.coordinates.x,
           particle3.coordinates.y
         );
-        particle3.glow();
 
       });
     });
@@ -167,7 +168,7 @@ function Particle(x, y, velocity, immortality) {
 
   this.render = function() {
    strokeWeight(particleSize);
-    stroke(r, g, b, 100);
+    stroke(r, g, b, 75);
     point(
       this.coordinates.x,
       this.coordinates.y
@@ -175,14 +176,15 @@ function Particle(x, y, velocity, immortality) {
   }
 
   this.pulse = function() {
-    if (!this.immortality && this.pulsed <= 8) {
+    if (!this.immortality && this.pulsed <= pulseSize) {
+      console.log("HI");
       strokeWeight(particleSize + this.pulsed);
       stroke(r, g, b, 255 - this.pulsed);
       point(
         this.coordinates.x,
         this.coordinates.y
       );
-      this.pulsed -= 1;
+      this.pulsed -= 2;
     }
   }
 
@@ -232,7 +234,4 @@ function resetEnvironment() {
   particles = [];
   seedParticles();
   setEnvironmentVariables();
-  // immortalParticles = (width / 100) * (height / 100);
-  // connectRadius = constrain(immortalParticles, 60, 100);
-  background(0);
 }
