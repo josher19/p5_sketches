@@ -10,8 +10,8 @@ var pMouseY;
 var pulseSize = 6;
 
 // set the boundaries for the particles
-var wStart = 0;//0.60;
-var hEnd = 1;//0.20;
+// var wStart = 0;
+// var hEnd = 1;
 
 var r = 237;
 var g = 34;
@@ -22,13 +22,20 @@ function setup() {
     window.innerWidth,
     window.innerHeight
   );
-  immortalParticles = width * height / 9000;
-  console.log(immortalParticles);
-  connectRadius = constrain(immortalParticles, 80, 100);
+
+  setEnvironmentVariables();
   seedParticles();
   img = loadImage("p5jshomescreen.png");
   pMouseX = mouseX;
   pMouseY = mouseY;
+}
+
+function setEnvironmentVariables() {
+  immortalParticles = map(width * height / 10000, 10, 100, 20, 40);
+  // console.log(width * height / 10000);
+  connectRadius = map(immortalParticles, 10, 100, 50, 120);
+  // console.log(immortalParticles);
+  // console.log(connectRadius);
 }
 
 function draw() {
@@ -40,15 +47,8 @@ function draw() {
       if ((particle1.coordinates.x >= width || particle1.coordinates.x <= 0)
         || (particle1.coordinates.y >= height || particle1.coordinates.y <= 0)) {
         particles.remove(i);
-        console.log("removed");
       }
     }
-      // if ((!particle1.immortality)
-      //   &&
-      //    {
-      //   particles.remove(i)
-      // }
-      // }
 
     particle1.render();
     particle1.move();
@@ -99,8 +99,6 @@ function draw() {
           particle3.coordinates.x,
           particle3.coordinates.y
         );
-
-        // particle3.glow();
       });
     });
   });
@@ -111,7 +109,6 @@ function draw() {
 }
 
 function seedParticles() {
-  console.log(immortalParticles);
   for (i = 0; i <= immortalParticles; i++) {
     var velocity = createVector(
       random(-maxParticleSpeed, maxParticleSpeed),
@@ -119,10 +116,10 @@ function seedParticles() {
     );
     var particle = new Particle(
       // get a radial dispersion by + or - i
-      // random((width * wStart) - i * dispersionRate, width),
-      // random(0, (height * hEnd) + i * dispersionRate),
-      random(0, width),
-      random(0, height),
+      random((width * wStart) - i * dispersionRate, width),
+      random(0, (height * hEnd) + i * dispersionRate),
+      // random(0, width),
+      // random(0, height),
       velocity,
       true
     );
@@ -148,15 +145,29 @@ function Particle(x, y, velocity, immortality) {
     // when one exists the a given area, die?
     // and when it dies, introduce a new one in the spawn area area
     // and when one spawns, make it pulse
+
     if (this.immortality) {
-      if (this.coordinates.x <= width * wStart - immortalParticles * dispersionRate || this.coordinates.x >= width) {
-        this.velocity.x = this.velocity.x * -1;
-      }
-      if (this.coordinates.y >= height * hEnd + immortalParticles * dispersionRate || this.coordinates.y <= 0) {
-        this.velocity.y = this.velocity.y * -1;
-      }
+      this.bounce();
     }
+    // if (this.immortality) {
+    //   if (this.coordinates.x <= width * wStart - immortalParticles * dispersionRate || this.coordinates.x >= width) {
+    //     this.velocity.x = this.velocity.x * -1;
+    //   }
+    //   if (this.coordinates.y >= height * hEnd + immortalParticles * dispersionRate || this.coordinates.y <= 0) {
+    //     this.velocity.y = this.velocity.y * -1;
+    //   }
+    // }
     // if (this.coordinates.x => )
+  }
+
+  this.bounce = function() {
+    if (this.coordinates.x <= 0 || this.coordinates.x >= width) {
+      this.velocity.x = this.velocity.x * -1;
+    }
+    if (this.coordinates.y <= 0 || this.coordinates.y >= height) {
+      this.velocity.y = this.velocity.y * -1;
+    }
+
   }
 
   this.render = function() {
@@ -233,7 +244,8 @@ function windowResized() {
 function resetEnvironment() {
   particles = [];
   seedParticles();
-  immortalParticles = (width / 100) * (height / 100);
-  connectRadius = constrain(immortalParticles, 60, 100);
+  setEnvironmentVariables();
+  // immortalParticles = (width / 100) * (height / 100);
+  // connectRadius = constrain(immortalParticles, 60, 100);
   background(0);
 }
