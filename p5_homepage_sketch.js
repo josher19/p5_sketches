@@ -2,11 +2,9 @@ var particles = [];
 var immortalParticles;
 var connectRadius;
 var particleSize = 3;
-var maxParticleSpeed = 0.08;//1;
-var mouseVelocity = 1.2;
+var maxParticleSpeed = 0.045;
+var mouseVelocity = 1.3;
 var glowFactor = 5;
-
-//0.004;//0.05;
 
 var pMouseX;
 var pMouseY;
@@ -23,14 +21,15 @@ function setup() {
     window.innerHeight
   );
 
+img = loadImage("p5jshomescreen.png");
   setEnvironmentVariables();
   seedParticles();
-  img = loadImage("p5jshomescreen.png");
   pMouseX = mouseX;
   pMouseY = mouseY;
 }
 
 function setEnvironmentVariables() {
+
   immortalParticles = map(
     width * height / 10000,
     10,
@@ -49,6 +48,7 @@ function setEnvironmentVariables() {
 
 function draw() {
   background(255);
+
   image(img, 0, 0, window.innerWidth, window.innerHeight);
   particles.forEach(function(particle1, i){
 
@@ -67,7 +67,6 @@ function draw() {
 
     particles.forEach(function(particle2, i2) {
 
-      // particle2.move();
       if (dist(
         particle1.coordinates.x,
         particle1.coordinates.y,
@@ -77,13 +76,10 @@ function draw() {
         return;
       }
 
-      // particle2.move();
+      particle2.move();
       particle2.connections++;
-
       particles.forEach(function(particle3, i3) {
 
-
-        // particle3.move();
         if (dist(
           particle2.coordinates.x,
           particle2.coordinates.y,
@@ -95,13 +91,14 @@ function draw() {
           return;
         }
 
+
         particle3.move();
         particle3.glow();
         particle3.connections++;
 
         noStroke();
         strokeWeight(1.5);
-        stroke(r, g, b, 2);
+        stroke(r, g, b, 5);
         noFill();
 
         triangle(
@@ -175,7 +172,6 @@ function Particle(x, y, velocity, immortality) {
 
   this.pulse = function() {
     if (!this.immortality && this.pulsed <= pulseSize) {
-      console.log("HI");
       strokeWeight(particleSize + this.pulsed);
       stroke(r, g, b, 255 - this.pulsed);
       point(
