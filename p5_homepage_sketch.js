@@ -2,16 +2,16 @@ var particles = [];
 var immortalParticles;
 var connectRadius;
 var particleSize = 3;
-var dispersionRate = 6;
-var maxParticleSpeed = 0.004;//0.05;
+var maxParticleSpeed = 0.1;//1;
+var mouseVelocity = 1.5;
+var glowFactor = 5;
+
+//0.004;//0.05;
+
 var pMouseX;
 var pMouseY;
 
 var pulseSize = 6;
-
-// set the boundaries for the particles
-// var wStart = 0;
-// var hEnd = 1;
 
 var r = 237;
 var g = 34;
@@ -31,11 +31,20 @@ function setup() {
 }
 
 function setEnvironmentVariables() {
-  immortalParticles = map(width * height / 10000, 10, 100, 20, 40);
-  // console.log(width * height / 10000);
-  connectRadius = map(immortalParticles, 10, 100, 50, 120);
-  // console.log(immortalParticles);
-  // console.log(connectRadius);
+  immortalParticles = map(
+    width * height / 10000,
+    10,
+    120,
+    20,
+    70
+  );
+  connectRadius = map(
+    immortalParticles,
+    10,
+    100,
+    50,
+    120
+  );
 }
 
 function draw() {
@@ -53,11 +62,11 @@ function draw() {
     particle1.render();
     particle1.move();
     particle1.connections++;
-    particle1.pulse();
+    particle1.glow();
 
     particles.forEach(function(particle2, i2) {
 
-      particle2.move();
+      // particle2.move();
       if (dist(
         particle1.coordinates.x,
         particle1.coordinates.y,
@@ -67,12 +76,13 @@ function draw() {
         return;
       }
 
+      particle2.move();
       particle2.connections++;
 
       particles.forEach(function(particle3, i3) {
 
 
-        particle3.move();
+        // particle3.move();
         if (dist(
           particle2.coordinates.x,
           particle2.coordinates.y,
@@ -84,12 +94,15 @@ function draw() {
           return;
         }
 
+
+        particle3.move();
         particle3.connections++;
 
         noStroke();
         strokeWeight(1);
-        stroke(r, g, b, 1);
-        fill(r, g, b, 8);
+        stroke(r, g, b, 5);
+        noFill();
+        // fill(r, g, b, 10);
 
         triangle(
           particle1.coordinates.x,
@@ -99,6 +112,8 @@ function draw() {
           particle3.coordinates.x,
           particle3.coordinates.y
         );
+        particle3.glow();
+
       });
     });
   });
@@ -115,11 +130,8 @@ function seedParticles() {
       random(-maxParticleSpeed, maxParticleSpeed)
     );
     var particle = new Particle(
-      // get a radial dispersion by + or - i
-      random((width * wStart) - i * dispersionRate, width),
-      random(0, (height * hEnd) + i * dispersionRate),
-      // random(0, width),
-      // random(0, height),
+      random(0, width),
+      random(0, height),
       velocity,
       true
     );
@@ -137,27 +149,11 @@ function Particle(x, y, velocity, immortality) {
   this.connections = 0;
 
   this.move = function() {
-    // this.coordinates.x += this.velocity.x;
-    // this.coordinates.y += this.velocity.y;
     this.coordinates.add(this.velocity);
-
-    // left off here
-    // when one exists the a given area, die?
-    // and when it dies, introduce a new one in the spawn area area
-    // and when one spawns, make it pulse
 
     if (this.immortality) {
       this.bounce();
     }
-    // if (this.immortality) {
-    //   if (this.coordinates.x <= width * wStart - immortalParticles * dispersionRate || this.coordinates.x >= width) {
-    //     this.velocity.x = this.velocity.x * -1;
-    //   }
-    //   if (this.coordinates.y >= height * hEnd + immortalParticles * dispersionRate || this.coordinates.y <= 0) {
-    //     this.velocity.y = this.velocity.y * -1;
-    //   }
-    // }
-    // if (this.coordinates.x => )
   }
 
   this.bounce = function() {
@@ -167,7 +163,6 @@ function Particle(x, y, velocity, immortality) {
     if (this.coordinates.y <= 0 || this.coordinates.y >= height) {
       this.velocity.y = this.velocity.y * -1;
     }
-
   }
 
   this.render = function() {
@@ -191,30 +186,22 @@ function Particle(x, y, velocity, immortality) {
     }
   }
 
-  // this.glow = function() {
-  //   // strokeWeight(0.05);
-  //   // stroke(255);
-  //   // noFill();
-  //   // // fill(255, 0);
-  //   // ellipse(
-  //   //   this.coordinates.x,
-  //   //   this.coordinates.y,
-  //   //   particleSize
-  //   // );
-  //   strokeWeight(particleSize + this.connections * 3);
-  //   stroke(r, 20, 60, 2);
-  //   point(
-  //     this.coordinates.x,
-  //     this.coordinates.y
-  //   );
-  // }
+  this.glow = function() {
+    strokeWeight(particleSize + this.connections * glowFactor);
+    // stroke(r, g, b, 10);
+    stroke(r, g, 70, 15);
+    point(
+      this.coordinates.x,
+      this.coordinates.y
+    );
+  }
 }
 
 function mouseMoved() {
   if (frameCount % 5 == 0) {
     var v = createVector(
-      mouseX - pMouseX > 0 ? -maxParticleSpeed * 2 : maxParticleSpeed * 2,
-      mouseY - pMouseY > 0 ? -maxParticleSpeed * 2: maxParticleSpeed * 2
+      mouseX - pMouseX > 0 ? -maxParticleSpeed * mouseVelocity : maxParticleSpeed * mouseVelocity,
+      mouseY - pMouseY > 0 ? -maxParticleSpeed * mouseVelocity : maxParticleSpeed * mouseVelocity
     );
     var particle = new Particle(
       mouseX,
