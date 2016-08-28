@@ -96,7 +96,7 @@ function draw() {
         noStroke();
         strokeWeight(1.5);
         stroke(r, g, b, 5);
-        // noFill();
+        noFill();
 
         triangle(
           particle1.coordinates.x,
