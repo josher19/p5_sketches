@@ -10,5 +10,4 @@ Below are visuals of the results of these exercises.
 
 ![alt tag](gifs/electric_field.gif)
 
-
 ![alt tag](gifs/02_connections.gif)
