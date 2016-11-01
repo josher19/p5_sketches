@@ -81,15 +81,32 @@ function markCell(row, col) {
   rect(col * spacing, row * spacing, spacing, spacing);
   // then tear down wall adjacent to any given neighbor
   removeWall(row, col);
-  // text(grid[row][col], 20 + (row * spacing), 20 +  (col * spacing));
+  text(grid[row][col], 20 + (row * spacing), 20 +  (col * spacing));
 }
 
 function removeWall(row, col) {
-  neighb
-
+  // get all neighbors marked with "True"
+  console.log(getAdjacentCells(row, col, 'boolean'));
   // select random neighbor to bridge
 }
 
+function getAdjacentCells(row, col, markedAs) {
+  adjacentCells = [
+    [row, col + 1],
+    [row, col - 1],
+    [row + 1, col],
+    [row - 1, col]
+  ];
+
+
+  adjacentCells = []
+  if (row <= totalRows - 1 && row >= 0 && col <= totalColumns - 1 && col >= 0) {
+    if (typeof(grid[row][col]) === markedAs) {
+      adjacentCells.push([row][col])
+    }
+  }
+  return adjacentCells;
+}
 
 function makeGrid() {
   strokeWeight(3);
