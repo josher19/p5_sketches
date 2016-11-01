@@ -3,8 +3,6 @@ lineWidth = 3;
 totalRows = 0;
 totalColumns = 0;
 
-
-// delete from frontier when a frontier cell has been discovered
 frontier = {}
 grid = []
 
@@ -19,9 +17,9 @@ function setup() {
 }
 
 function draw() {
-  // draw from the frontier array, mark as
+  // draw from the frontier dictionary, mark as
   // cell that has already been used up
-  // remove cell from the frontier dictionary
+  // then remove cell from the dictionary
   frontier_keys = Object.keys(frontier);
   var pick = Math.round(
     random(frontier_keys.length - 1)
@@ -35,7 +33,6 @@ function draw() {
   expandFrontier(row, col);
 
   if (frontier_keys.length == 1) {
-    console.log("stopped");
     noLoop();
   }
 
@@ -55,22 +52,12 @@ function draw() {
 
 }
 
-function markCell(row, col) {
-  stroke(0);
-  fill(255);
-  grid[row][col] = true;
-  rect(row * spacing, col * spacing, spacing, spacing);
-  // debug
-  // text(grid[row][col], 20 + (row * spacing), 20 +  (col * spacing));
-}
-
 function expandFrontier(row, col) {
   addFrontier(row, col - 1);
   addFrontier(row, col + 1);
   addFrontier(row + 1, col);
   addFrontier(row - 1, col);
 }
-
 
 function addFrontier(row, col) {
   if (row <= totalRows - 1 && row >= 0 && col <= totalColumns - 1 && col >= 0) {
@@ -81,9 +68,26 @@ function addFrontier(row, col) {
     if (!(cell in frontier)) {
       frontier[cell] = [row, col];
       fill(20, 50, 50);
-      rect(row * spacing, col * spacing, spacing, spacing);
+      rect(col * spacing, row * spacing, spacing, spacing);
     }
   }
+}
+
+function markCell(row, col) {
+  stroke(0);
+  fill(255);
+  grid[row][col] = true;
+  // mark cell itself
+  rect(col * spacing, row * spacing, spacing, spacing);
+  // then tear down wall adjacent to any given neighbor
+  removeWall(row, col);
+  // text(grid[row][col], 20 + (row * spacing), 20 +  (col * spacing));
+}
+
+function removeWall(row, col) {
+  neighb
+
+  // select random neighbor to bridge
 }
 
 
