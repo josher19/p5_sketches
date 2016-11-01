@@ -11,22 +11,25 @@ grid = []
 function setup() {
   createCanvas(901, 701);
   // to accomodate for cut off pixel at the end of the maze
-  spacing = (height - 1) / 50;
+  spacing = (height - 1) / 20;
   makeGrid();
   markCell(0, 0);
   expandFrontier(0, 0);
-  frameRate(20);
+  frameRate(60);
 }
 
-
 function draw() {
+  frontier_keys = Object.keys(frontier);
   var pick = Math.round(
-    random(frontier.length - 1)
+    random(frontier_keys.length - 1)
   );
+  cell = frontier_keys[pick];
+  delete frontier[pick];
+  row  = frontier[cell][0];
+  col  = frontier[cell][1];
+  markCell(row, col);
+  expandFrontier(row, col);
 
-  cell = frontier[pick];
-  markCell(cell[0], cell[1]);
-  expandFrontier(cell[0], cell[1]);
 
   // # maybe try not to favor top or bottom....
   // # get all cells to the top, left, bottom, right
@@ -44,29 +47,29 @@ function draw() {
 
 }
 
-function markCell(row, column) {
-  grid[row][column] = 'X';
+function markCell(row, col) {
+  grid[row][col] = 'X';
   // draw here
   fill(255);
-  rect(row * spacing, column * spacing, spacing, spacing);
+  rect(row * spacing, col * spacing, spacing, spacing);
 }
 
-function expandFrontier(row, column) {
-  // don't add anything into the frontier if it's aleady there.
-  if (column - 1 > 0) {
-    frontier.push([row, column - 1])
-  }
-  // bottom
-  if (row + 1 < totalRows) {
-    frontier.push([row, column + 1])
-  }
-  // left
-  if (row - 1 > 0) {
-    frontier.push([row - 1, column])
-  }
-  if (row + 1 < totalColumns) {
-    // right
-    frontier.push([row + 1, column])
+function expandFrontier(row, col) {
+  addFrontier(row, col - 1);
+  addFrontier(row, col + 1);
+  addFrontier(row + 1, col);
+  addFrontier(row - 1, col);
+}
+
+
+function addFrontier(row, col) {
+  if (row <= totalRows && row >= 0 && col <= totalColumns && col >= 0) {
+    cell = grid[row][col];
+    if (!(cell in frontier)) {
+      frontier[cell] = [row, col];
+      fill(20, 50, 50);
+      rect(row * spacing, col * spacing, spacing, spacing);
+    }
   }
 }
 
@@ -75,30 +78,30 @@ function makeGrid() {
   strokeWeight(3);
   var counter = 0;
   var row = 0;
-  var c = 0;
+  var col = 0;
   for (var y = 0; y <= height; y += spacing) {
     grid.push([])
     for (var x = 0; x <= width; x += spacing) {
-      grid[row].push(c);
+      grid[row].push(col);
       // draw grid while making it
       fill(50);
       rect(x, y, spacing, spacing);
       // we might not need this.
       // it might be best to just use none and true
-      c++;
+      col++;
     }
     row++;
   }
-  totalRows = grid.length;
-  totalColumns = grid[0].length;
+  totalRows = grid.length - 1;
+  totalColumns = grid[0].length - 1;
 }
 
 function Cell() {
   // the cell's ID
   this.num = n;
   // contains the X, Y coordinate on the grid
-  this.x = x;
-  this.y = y;
-  this.marked = False;
+  this.row = row;
+  this.col = col;
+  this.marked = false;
 
 }
