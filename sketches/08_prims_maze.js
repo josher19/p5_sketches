@@ -29,7 +29,9 @@ function draw() {
   col  = frontier[cell][1];
   delete frontier[cell];
 
+  // mark frontier cell as used
   markCell(row, col);
+  removeWall(row, col);
   expandFrontier(row, col);
 
   if (frontier_keys.length == 1) {
@@ -53,25 +55,32 @@ function draw() {
 }
 
 function expandFrontier(row, col) {
-  addFrontier(row, col - 1);
-  addFrontier(row, col + 1);
-  addFrontier(row + 1, col);
-  addFrontier(row - 1, col);
-}
-
-function addFrontier(row, col) {
-  if (row <= totalRows - 1 && row >= 0 && col <= totalColumns - 1 && col >= 0) {
-    if (grid[row][col] === true) {
-      return;
-    }
+  newFrontier = getAdjacentCells(row, col, 'number');
+  newFrontier.forEach(function(coord) {
+    row = coord[0];
+    col = coord[1];
     cell = grid[row][col];
     if (!(cell in frontier)) {
       frontier[cell] = [row, col];
       fill(20, 50, 50);
       rect(col * spacing, row * spacing, spacing, spacing);
     }
-  }
+  });
 }
+
+// function addFrontier(row, col) {
+//   if (row <= totalRows - 1 && row >= 0 && col <= totalColumns - 1 && col >= 0) {
+//     if (grid[row][col] === true) {
+//       return;
+//     }
+//     cell = grid[row][col];
+//     if (!(cell in frontier)) {
+//       frontier[cell] = [row, col];
+//       fill(20, 50, 50);
+//       rect(col * spacing, row * spacing, spacing, spacing);
+//     }
+//   }
+// }
 
 function markCell(row, col) {
   stroke(0);
@@ -80,13 +89,14 @@ function markCell(row, col) {
   // mark cell itself
   rect(col * spacing, row * spacing, spacing, spacing);
   // then tear down wall adjacent to any given neighbor
-  removeWall(row, col);
+  // that is marked as true.
   text(grid[row][col], 20 + (row * spacing), 20 +  (col * spacing));
 }
 
 function removeWall(row, col) {
   // get all neighbors marked with "True"
   console.log(getAdjacentCells(row, col, 'boolean'));
+  // debugger;
   // select random neighbor to bridge
 }
 
@@ -97,15 +107,28 @@ function getAdjacentCells(row, col, markedAs) {
     [row + 1, col],
     [row - 1, col]
   ];
-
-
-  adjacentCells = []
-  if (row <= totalRows - 1 && row >= 0 && col <= totalColumns - 1 && col >= 0) {
-    if (typeof(grid[row][col]) === markedAs) {
-      adjacentCells.push([row][col])
+  adjacentCellsF = adjacentCells.filter(function(coord) {
+    row = coord[0];
+    col = coord[1];
+    if (row <= totalRows - 1 && row >= 0 && col <= totalColumns - 1 && col >= 0) {
+      console.log(markedAs);
+      // debugger;
+      return typeof grid[row][col] === markedAs;
     }
-  }
-  return adjacentCells;
+  });
+  return adjacentCellsF;
+  // below works. would rather filter.
+  // var filtered_cells = [];
+  // adjacentCells.forEach(function(cell){
+  //   row = cell[0];
+  //   col = cell[1];
+  //   if (row <= totalRows - 1 && row >= 0 && col <= totalColumns - 1 && col >= 0) {
+  //     if (grid[row][col] === markedAs) {
+  //       filtered_cells.push([row, col]);
+  //     };
+  //   }
+  // });
+  // return filtered_cells;
 }
 
 function makeGrid() {
