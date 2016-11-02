@@ -1,8 +1,8 @@
 var spacing   = 0;
 var lineWidth = 7;
 var lineWidthOffset = 3.25;
-var totalRows = 0;
 
+var totalRows = 0;
 var totalColumns = 0;
 var frontier = {}
 var grid = []
@@ -19,13 +19,19 @@ function setup() {
   spacing = (height) / 60;
   makeGrid();
   strokeWeight(lineWidth);
-  markCell(0, 0);
-  expandFrontier(0, 0);
-  // frameRate(60);
+
+  // start in center
+  row = int(totalRows / 2);
+  col = int(totalColumns / 2);
+
+  // start in upper-left
+  // row = 0;
+  // col = 0;
+  markCell(row, col);
+  expandFrontier(row, col);
 }
 
 function draw() {
-  strokeWeight(lineWidth);
   frontier_keys = Object.keys(frontier);
   var pick = Math.round(
     random(frontier_keys.length - 1)
@@ -34,14 +40,43 @@ function draw() {
   row  = frontier[cell][0];
   col  = frontier[cell][1];
   delete frontier[cell];
-
   // mark frontier cell as used
   markCell(row, col);
-  // then tear down wall a random wall adjacent to any given marked neighbor
+  // then tear a random wall adjacent to any given marked neighbor
   removeWall(row, col);
   expandFrontier(row, col);
   if (frontier_keys.length == 1) {
     noLoop();
+  }
+}
+
+function makeGrid() {
+  stroke(48);
+  var counter = 0;
+  var row = 0, col = 0;
+  for (var y = 0; y <= height; y += spacing) {
+    grid.push([])
+    for (var x = 0; x <= width; x += spacing) {
+      strokeWeight(2);
+      grid[row].push(col);
+      fill(35);
+      rect(x, y, spacing, spacing);
+      col++;
+    }
+    row++;
+  }
+  totalRows = grid.length;
+  totalColumns = grid[0].length;
+}
+
+function markCell(row, col) {
+  stroke(20);
+  fill(colors[cellColor]);
+  grid[row][col] = true;
+  rect(col * spacing, row * spacing, spacing, spacing);
+  if (frameCount % 7 == 0) {
+    cellColor ++;
+    cellColor = cellColor % totalColors;
   }
 }
 
@@ -57,18 +92,6 @@ function expandFrontier(row, col) {
       rect(col * spacing, row * spacing, spacing, spacing);
     }
   });
-}
-
-function markCell(row, col) {
-  stroke(20);
-  fill(colors[cellColor]);
-  grid[row][col] = true;
-  rect(col * spacing, row * spacing, spacing, spacing);
-  if (frameCount % 7 == 0) {
-    cellColor ++;
-    cellColor = cellColor % totalColors;
-  }
-
 }
 
 function removeWall(row, col) {
@@ -122,23 +145,3 @@ function getAdjacentCells(row, col, markedAs) {
   });
   return adjacentCells;
 }
-
-function makeGrid() {
-  stroke(48);
-  var counter = 0;
-  var row = 0, col = 0;
-  for (var y = 0; y <= height; y += spacing) {
-    grid.push([])
-    for (var x = 0; x <= width; x += spacing) {
-      strokeWeight(2);
-      grid[row].push(col);
-      fill(35);
-      rect(x, y, spacing, spacing);
-      col++;
-    }
-    row++;
-  }
-  totalRows = grid.length;
-  totalColumns = grid[0].length;
-}
-
