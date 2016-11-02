@@ -2,10 +2,11 @@ var spacing   = 0;
 var lineWidth = 7;
 var lineWidthOffset = 3.25;
 
-var totalRows = 0;
-var totalColumns = 0;
 var frontier = {}
 var grid = []
+
+var totalRows = 0;
+var totalColumns = 0;
 
 var colors;
 var totalColors = 360;
@@ -39,10 +40,14 @@ function draw() {
   cell = frontier_keys[pick];
   row  = frontier[cell][0];
   col  = frontier[cell][1];
+
   delete frontier[cell];
-  // mark frontier cell as used
+  /*
+      Mark cell as used.
+      And then tear down wall between it
+      and an adjacent marked neighbor.
+  */
   markCell(row, col);
-  // then tear a random wall adjacent to any given marked neighbor
   removeWall(row, col);
   expandFrontier(row, col);
   if (frontier_keys.length == 1) {
@@ -95,12 +100,14 @@ function expandFrontier(row, col) {
 }
 
 function removeWall(row, col) {
-  // get all neighbors marked neighbors
+  /*
+    Get all marked neighbors.
+    Then pick one at random,
+    and tear down the adjoining wall.
+  */
   ac = getAdjacentCells(row, col, 'boolean');
   pick = ac[Math.round(random(ac.length - 1))];
   var ac_row = pick[0], ac_col = pick[1];
-  cell = grid[ac_row][ac_col];
-
   if (ac_col < col) {
     // adjacent to the left
     col = (col * spacing) - lineWidth;
